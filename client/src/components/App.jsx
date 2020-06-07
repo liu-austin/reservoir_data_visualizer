@@ -4,6 +4,7 @@ import axios from "axios";
 import MonthlyAvgChart from './monthly_avg_chart.jsx';
 import MarkedMap from './marked_map.jsx';
 import SearchResults from './search_results.jsx';
+import DataChart from './data_chart.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -156,7 +157,7 @@ class App extends React.Component {
         <h1>
           <strong>Reservoir Data Visualizer</strong>
         </h1>
-        <div className="first-dropdown">
+        <div style={{display: 'inline-block', verticalAlign: 'top'}} className="first-dropdown">
           <p>
             <strong>Option 1</strong>
           </p>
@@ -185,11 +186,11 @@ class App extends React.Component {
         </select>
         </div>
         <div style={{display: 'inline-block'}}>
-        <div className="centered">
+        <div style={{display: 'inline-block', margin: '0 50px', verticalAlign: 'top'}} className="centered">
         <p><strong>Option 2</strong></p>
         <MarkedMap selectMarker={this.selectMarker} locations={this.state.reservoir_locations}/>
         </div>
-        <div className="centered">
+        <div style={{display: 'inline-block', verticalAlign: 'top'}} className="centered">
         <p><strong>Option 3 (Limit 20 Results)</strong></p>
           <input className="search_input" value={this.state.search_term} onChange={this.handleSearchChange}/>
           <SearchResults clear={this.clearSearchResults} selectResult={this.selectMarker} searchResults={this.state.search_results}/>
@@ -199,7 +200,7 @@ class App extends React.Component {
         <MonthlyAvgChart year={2020} data={this.state.monthlyAvg2020}/>
         <MonthlyAvgChart year={2019} data={this.state.monthlyAvg2019}/>
         <MonthlyAvgChart year={2018} data={this.state.monthlyAvg2018}/>
-
+          <DataChart data2018={this.state.monthlyAvg2018} data2019={this.state.monthlyAvg2019} data2020={this.state.monthlyAvg2020}/>
       </div>
     );
   }

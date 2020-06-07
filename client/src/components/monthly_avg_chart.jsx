@@ -19,7 +19,7 @@ const MonthlyAvgChart = (props) => {
             label: 'Month'
         },
         y: {
-            label: '99604_00054_32400'
+            label: 'Reservoir storage, acre-feet'
         },
         type: 'timeseries',
         tick: {

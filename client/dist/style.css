@@ -3,8 +3,8 @@
 }
 
 .leaflet-container {
-    height: 400px;
-    width: 800px;
+    height: 300px;
+    width: 600px;
   }
 
   .search_input {
@@ -27,3 +27,10 @@
       color: white;
       background-color: blue;
   }
+
+  td, th {
+      border: 1px solid black;
+      padding: 25px;
+  }
+
+
