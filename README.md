@@ -6,5 +6,4 @@
 `npm run setup`\
 ## Start Application
 To start the application, run: \
-\
 `npm start`

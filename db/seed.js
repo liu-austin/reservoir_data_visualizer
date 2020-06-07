@@ -11,9 +11,11 @@ const seedDatabase = async () => {
         if (err) console.log(err);
         if (results) console.log(results);
     });
-    await client.query(queryString2, (err, results) => {
+    client.query(queryString2, (err, results) => {
         if (err) console.log(err);
-        if (results) console.log(results);
+        if (results) {
+            client.end();
+        }
     });
 };
 
