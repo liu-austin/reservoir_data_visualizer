@@ -58,6 +58,16 @@ app.get('/locations', (req, res) => {
     });
 });
 
+app.get('/search/:search_term', (req, res) => {
+    clientPG.query(`select * from metadata where station_nm ilike '%${req.params.search_term}%' limit 20`, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.status(200).send(results);
+        }
+    });
+});
+
 const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);

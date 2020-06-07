@@ -3,6 +3,8 @@ import React from "react";
 import axios from "axios";
 import MonthlyAvgChart from './monthly_avg_chart.jsx';
 import MarkedMap from './marked_map.jsx';
+import SearchResults from './search_results.jsx';
+import SearchResult from "./search_result.jsx";
 
 class App extends React.Component {
   constructor(props) {
@@ -13,12 +15,20 @@ class App extends React.Component {
       sites: [],
       reservoir_data: [],
       reservoir_locations: [],
-      monthlyAvg: []
+      monthlyAvg: [],
+      search_term: '',
+      search_results: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.selectSite = this.selectSite.bind(this);
     this.fetchStorageData = this.fetchStorageData.bind(this);
     this.selectMarker = this.selectMarker.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.clearSearchResults = this.clearSearchResults.bind(this);
+  }
+
+  clearSearchResults() {
+      this.setState({search_results: []});
   }
 
   handleChange(e) {
@@ -41,7 +51,6 @@ class App extends React.Component {
 
   fetchStorageData() {
     axios.get(`/storage/${this.state.site}`).then(results => {
-        // console.log(results.data.rows);
         this.setState({reservoir_data: results.data.rows}, () => {
             if (this.state.reservoir_data.length) {
                     let monthlyTotal = {
@@ -68,12 +77,20 @@ class App extends React.Component {
                 for (let i = 1; i < 6; i++) {
                     avg.push(monthlyTotal[i] / monthlyNum[i]);
                 }
-                this.setState({monthlyAvg: avg}, () => {
-                    console.log(this.state.monthlyAvg);
-                });
+                this.setState({monthlyAvg: avg});
             } 
         });
     });
+  }
+
+  handleSearchChange(e) {
+      this.setState({search_term: e.target.value}, () => {
+        if (this.state.search_term !== '') {
+            axios.get(`/search/${this.state.search_term}`).then(results => this.setState({search_results: results.data.rows}, () => {
+                console.log(this.state.search_results);
+            }));
+        }
+      });
   }
 
   selectSite(e) {
@@ -124,6 +141,11 @@ class App extends React.Component {
         <div className="centered">
         <p><strong>Option 2</strong></p>
         <MarkedMap selectMarker={this.selectMarker} locations={this.state.reservoir_locations}/>
+        </div>
+        <div className="centered">
+        <p><strong>Option 3 (Limit 20 Results)</strong></p>
+          <input className="search_input" value={this.state.search_term} onChange={this.handleSearchChange}/>
+          <SearchResults clear={this.clearSearchResults} selectResult={this.selectMarker} searchResults={this.state.search_results}/>
         </div>
         </div>
         <MonthlyAvgChart data={this.state.monthlyAvg}/>
