@@ -4,6 +4,9 @@
   "description": "",
   "main": "server/index.js",
   "scripts": {
+    "init": "psql postgres -a -f db/setup.sql",
+    "seed": "node db/seed.js",
+    "setup": "npm run init && npm run seed",
     "start": "node server/index.js",
     "build": "webpack -d --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,7 +30,9 @@
     "morgan": "^1.10.0",
     "pg": "^8.2.1",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-c3js": "^0.1.20",
+    "react-dom": "^16.13.1",
+    "react-leaflet": "^2.7.0"
   },
   "devDependencies": {
     "@babel/runtime": "^7.7.6",
