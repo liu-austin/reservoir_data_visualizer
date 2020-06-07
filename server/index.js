@@ -37,6 +37,17 @@ app.get('/sites', (req, res) => {
     }
 });
 
+app.get('/storage/:id', (req, res) => {
+    let siteNumber = Number(req.params.id);
+    clientPG.query(`select * from daily_data where site_no = ${req.params.id}`, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.status(200).send(results);
+        }
+    });
+});
+
 const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);

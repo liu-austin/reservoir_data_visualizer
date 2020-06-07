@@ -12,6 +12,10 @@ module.exports = {
                 'plugins': ['@babel/plugin-proposal-class-properties', '@babel/plugin-transform-runtime']}]
             }
           }
+        },
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
         }
       ]
     },

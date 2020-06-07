@@ -1,6 +1,7 @@
 // jshint esversion:6
 import React from "react";
 import axios from "axios";
+import MonthlyAvgChart from './monthly_avg_chart.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -8,7 +9,9 @@ class App extends React.Component {
     this.state = {
       selectedState: "",
       site: null,
-      sites: []
+      sites: [],
+      reservoir_data: [],
+      monthlyAvg: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.selectSite = this.selectSite.bind(this);
@@ -30,7 +33,41 @@ class App extends React.Component {
 
   selectSite(e) {
     this.setState({site: e.target.value}, () => {
-        console.log(this.state.site);
+        axios.get(`/storage/${this.state.site}`).then(results => {
+            // console.log(results.data.rows);
+            this.setState({reservoir_data: results.data.rows}, () => {
+                if (this.state.reservoir_data.length) {
+                        let monthlyTotal = {
+                            1: 0,
+                            2: 0,
+                            3: 0,
+                            4: 0,
+                            5: 0,
+                            6: 0
+                        }
+                        let monthlyNum = {
+                            1: 0,
+                            2: 0,
+                            3: 0,
+                            4: 0,
+                            5: 0,
+                            6: 0
+                        }
+                    this.state.reservoir_data.map((datum) => {
+                        monthlyTotal[datum.date_time[6]] += Number(datum.data_val);
+                        monthlyNum[datum.date_time[6]] += 1;
+                    });
+                    console.log(monthlyTotal, monthlyNum)
+                    let avg = [];
+                    for (let i = 1; i < 6; i++) {
+                        avg.push(monthlyTotal[i] / monthlyNum[i]);
+                    }
+                    this.setState({monthlyAvg: avg}, () => {
+                        console.log(this.state.monthlyAvg);
+                    });
+                } 
+            });
+        });
     });
   }
 
@@ -49,6 +86,7 @@ class App extends React.Component {
             <strong>Option 1</strong>
           </p>
           <select value={this.state.selectedState} onChange={this.handleChange}>
+            <option value=""></option>
             <option value="AZ">AZ</option>
             <option value="CA">CA</option>
             <option value="NV">NV</option>
@@ -71,6 +109,7 @@ class App extends React.Component {
           }
         </select>
         </div>
+        <MonthlyAvgChart data={this.state.monthlyAvg}/>
       </div>
     );
   }
