@@ -1,3 +1,8 @@
-.main {
+.centered {
     text-align: center;
 }
+
+.leaflet-container {
+    height: 400px;
+    width: 800px;
+  }

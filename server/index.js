@@ -48,6 +48,16 @@ app.get('/storage/:id', (req, res) => {
     });
 });
 
+app.get('/locations', (req, res) => {
+    clientPG.query(`select * from metadata`, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.status(200).send(results);
+        }
+    });
+});
+
 const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);

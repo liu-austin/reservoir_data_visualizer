@@ -2,6 +2,7 @@
 import React from "react";
 import axios from "axios";
 import MonthlyAvgChart from './monthly_avg_chart.jsx';
+import MarkedMap from './marked_map.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -11,16 +12,17 @@ class App extends React.Component {
       site: null,
       sites: [],
       reservoir_data: [],
+      reservoir_locations: [],
       monthlyAvg: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.selectSite = this.selectSite.bind(this);
+    this.fetchStorageData = this.fetchStorageData.bind(this);
+    this.selectMarker = this.selectMarker.bind(this);
   }
 
   handleChange(e) {
-
     this.setState({ selectedState: e.target.value }, () => {
-
       axios
       .get(`/sites`, {
         params: {
@@ -31,53 +33,62 @@ class App extends React.Component {
     });
   }
 
-  selectSite(e) {
-    this.setState({site: e.target.value}, () => {
-        axios.get(`/storage/${this.state.site}`).then(results => {
-            // console.log(results.data.rows);
-            this.setState({reservoir_data: results.data.rows}, () => {
-                if (this.state.reservoir_data.length) {
-                        let monthlyTotal = {
-                            1: 0,
-                            2: 0,
-                            3: 0,
-                            4: 0,
-                            5: 0,
-                            6: 0
-                        }
-                        let monthlyNum = {
-                            1: 0,
-                            2: 0,
-                            3: 0,
-                            4: 0,
-                            5: 0,
-                            6: 0
-                        }
-                    this.state.reservoir_data.map((datum) => {
-                        monthlyTotal[datum.date_time[6]] += Number(datum.data_val);
-                        monthlyNum[datum.date_time[6]] += 1;
-                    });
-                    console.log(monthlyTotal, monthlyNum)
-                    let avg = [];
-                    for (let i = 1; i < 6; i++) {
-                        avg.push(monthlyTotal[i] / monthlyNum[i]);
+  selectMarker(siteInfo) {
+    this.setState({site: siteInfo}, () => {
+        this.fetchStorageData();
+    });
+  }
+
+  fetchStorageData() {
+    axios.get(`/storage/${this.state.site}`).then(results => {
+        // console.log(results.data.rows);
+        this.setState({reservoir_data: results.data.rows}, () => {
+            if (this.state.reservoir_data.length) {
+                    let monthlyTotal = {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0
                     }
-                    this.setState({monthlyAvg: avg}, () => {
-                        console.log(this.state.monthlyAvg);
-                    });
-                } 
-            });
+                    let monthlyNum = {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0
+                    }
+                this.state.reservoir_data.map((datum) => {
+                    monthlyTotal[datum.date_time[6]] += Number(datum.data_val);
+                    monthlyNum[datum.date_time[6]] += 1;
+                });
+                let avg = [];
+                for (let i = 1; i < 6; i++) {
+                    avg.push(monthlyTotal[i] / monthlyNum[i]);
+                }
+                this.setState({monthlyAvg: avg}, () => {
+                    console.log(this.state.monthlyAvg);
+                });
+            } 
         });
     });
   }
 
-  componentDidMount() {
-
+  selectSite(e) {
+    this.setState({site: e.target.value}, () => {
+        this.fetchStorageData();
+    });
   }
 
+  componentDidMount() {
+    axios.get(`/locations`).then(results => this.setState({reservoir_locations: results.data.rows}));
+  }
+ 
   render() {
     return (
-      <div className="main">
+      <div className="centered">
         <p>
           <strong>Reservoir Data Visualizer</strong>
         </p>
@@ -109,7 +120,14 @@ class App extends React.Component {
           }
         </select>
         </div>
+        <div style={{display: 'inline-block'}}>
+        <div className="centered">
+        <p><strong>Option 2</strong></p>
+        <MarkedMap selectMarker={this.selectMarker} locations={this.state.reservoir_locations}/>
+        </div>
+        </div>
         <MonthlyAvgChart data={this.state.monthlyAvg}/>
+
       </div>
     );
   }
