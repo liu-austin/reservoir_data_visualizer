@@ -4,7 +4,6 @@ import axios from "axios";
 import MonthlyAvgChart from './monthly_avg_chart.jsx';
 import MarkedMap from './marked_map.jsx';
 import SearchResults from './search_results.jsx';
-import SearchResult from "./search_result.jsx";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,7 +14,9 @@ class App extends React.Component {
       sites: [],
       reservoir_data: [],
       reservoir_locations: [],
-      monthlyAvg: [],
+      monthlyAvg2020: [],
+      monthlyAvg2019: [],
+      monthlyAvg2018: [],
       search_term: '',
       search_results: []
     };
@@ -53,32 +54,78 @@ class App extends React.Component {
     axios.get(`/storage/${this.state.site}`).then(results => {
         this.setState({reservoir_data: results.data.rows}, () => {
             if (this.state.reservoir_data.length) {
-                    let monthlyTotal = {
+                    let monthlyTotal2020 = {
                         1: 0,
                         2: 0,
                         3: 0,
                         4: 0,
                         5: 0,
                         6: 0
-                    }
-                    let monthlyNum = {
+                    };
+                    let monthlyNum2020 = {
                         1: 0,
                         2: 0,
                         3: 0,
                         4: 0,
                         5: 0,
                         6: 0
-                    }
+                    };
+                    let monthlyTotal2019 = {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0
+                    };
+                    let monthlyNum2019 = {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0
+                    };
+                    let monthlyTotal2018 = {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0
+                    };
+                    let monthlyNum2018 = {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0
+                    };
                 this.state.reservoir_data.map((datum) => {
-                    monthlyTotal[datum.date_time[6]] += Number(datum.data_val);
-                    monthlyNum[datum.date_time[6]] += 1;
+                    if (datum.date_time.slice(0,4) === '2020') {
+                        monthlyTotal2020[datum.date_time[6]] += Number(datum.data_val);
+                        monthlyNum2020[datum.date_time[6]] += 1;
+                    } else if (datum.date_time.slice(0,4) === '2019') {
+                        monthlyTotal2019[datum.date_time[6]] += Number(datum.data_val);
+                        monthlyNum2019[datum.date_time[6]] += 1;
+                    } else if (datum.date_time.slice(0,4) === '2018') {
+                        monthlyTotal2018[datum.date_time[6]] += Number(datum.data_val);
+                        monthlyNum2018[datum.date_time[6]] += 1;
+                    }
                 });
-                let avg = [];
+                let avg2020 = [];
+                let avg2019 = [];
+                let avg2018 = [];
                 for (let i = 1; i < 6; i++) {
-                    avg.push(monthlyTotal[i] / monthlyNum[i]);
+                    avg2020.push(monthlyTotal2020[i] / monthlyNum2020[i]);
+                    avg2019.push(monthlyTotal2019[i] / monthlyNum2019[i]);
+                    avg2018.push(monthlyTotal2018[i] / monthlyNum2018[i]);
                 }
-                this.setState({monthlyAvg: avg});
-            } 
+                this.setState({monthlyAvg2020: avg2020, monthlyAvg2019: avg2019, monthlyAvg2018: avg2018});
+            } else {
+                this.setState({monthlyAvg2020: [], monthlyAvg2019: [], monthlyAvg2018: []});
+            }
         });
     });
   }
@@ -106,9 +153,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="centered">
-        <p>
+        <h1>
           <strong>Reservoir Data Visualizer</strong>
-        </p>
+        </h1>
         <div className="first-dropdown">
           <p>
             <strong>Option 1</strong>
@@ -148,7 +195,10 @@ class App extends React.Component {
           <SearchResults clear={this.clearSearchResults} selectResult={this.selectMarker} searchResults={this.state.search_results}/>
         </div>
         </div>
-        <MonthlyAvgChart data={this.state.monthlyAvg}/>
+        <p><strong>{this.state.site ? `Site Number ${this.state.site}` : ''}</strong></p>
+        <MonthlyAvgChart year={2020} data={this.state.monthlyAvg2020}/>
+        <MonthlyAvgChart year={2019} data={this.state.monthlyAvg2019}/>
+        <MonthlyAvgChart year={2018} data={this.state.monthlyAvg2018}/>
 
       </div>
     );

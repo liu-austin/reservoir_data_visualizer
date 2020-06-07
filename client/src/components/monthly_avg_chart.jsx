@@ -9,8 +9,8 @@ const MonthlyAvgChart = (props) => {
         x: 'x',
         xFormat: '%Y-%m-%d',
         columns: [
-            ['x', '2020-01-01', '2020-02-01', '2020-03-01', '2020-04-01', '2020-05-01'],
-            ['x', '202001', '202002', '202003', '202004', '202005'],
+            ['x', `${props.year}-01-01`, `${props.year}-02-01`, `${props.year}-03-01`, `${props.year}-04-01`, `${props.year}-05-01`],
+            ['x', `${props.year}01`, `${props.year}02`, `${props.year}03`, `${props.year}04`, `${props.year}05`],
             ['Monthly Average'].concat(props.data)
         ]
     };
@@ -28,7 +28,7 @@ const MonthlyAvgChart = (props) => {
     }
     return (
         <div style={{textAlign: 'center'}}>
-        <p><strong>Monthly Average Chart 2020</strong></p>
+        <p><strong>{`Monthly Average Chart ${props.year}`}</strong></p>
         <C3Chart axis={axis} data={data} />
         </div>
     );
