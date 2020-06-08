@@ -180,7 +180,7 @@ class App extends React.Component {
         <h1>
           <strong>Reservoir Data Visualizer</strong>
         </h1>
-        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#collapseable">Show Options</button>
+        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#collapseable">Toggle Options</button>
         <div id="collapseable" className="collapse">
         <div style={{display: 'inline-block', verticalAlign: 'top'}} className="first-dropdown">
           <p>
