@@ -7,29 +7,34 @@ import 'c3/c3.css';
 const MonthlyAvgChart = (props) => {
     const data = {
         x: 'x',
-        xFormat: '%Y-%m-%d',
+        xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
         columns: [
-            ['x', `${props.year}-01-01`, `${props.year}-02-01`, `${props.year}-03-01`, `${props.year}-04-01`, `${props.year}-05-01`],
-            ['x', `${props.year}01`, `${props.year}02`, `${props.year}03`, `${props.year}04`, `${props.year}05`],
-            ['Monthly Average'].concat(props.data)
+            // ['x'].concat(props.dates),
+            // ['x'].concat(props.dates),
+            ['x'].concat(props.dates),
+            ['Daily Storage'].concat(props.data)
         ]
     };
     const axis = {
         x: {
-            label: 'Month'
-        },
+            type: 'timeseries',
+            tick: {
+                format: '%Y-%m-%d',
+                rotate: -90
+            },
+            label: 'Date'
+    },
         y: {
             label: 'Reservoir storage, acre-feet'
-        },
-        type: 'timeseries',
-        tick: {
-            format: '%Y-%m-%d'
         }
+    };
+    const zoom = {
+        enabled: true
     }
     return (
         <div style={{textAlign: 'center'}}>
-        <p><strong>{`Monthly Average Chart ${props.year}`}</strong></p>
-        <C3Chart axis={axis} data={data} />
+        <p><strong>{`Daily Reservoir Storage Chart ${props.year}`}</strong></p>
+        <C3Chart axis={axis} data={data} zoom={zoom}/>
         </div>
     );
 

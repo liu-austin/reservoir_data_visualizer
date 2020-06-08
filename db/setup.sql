@@ -22,7 +22,7 @@ CREATE TABLE metadata (
 CREATE TABLE daily_data (
     agency_cd varchar(255),
     site_no integer,
-    date_time varchar(255),
+    date_time date,
     data_val varchar(255),
     data_type varchar(255)
 );

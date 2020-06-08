@@ -19,7 +19,9 @@ class App extends React.Component {
       monthlyAvg2019: [],
       monthlyAvg2018: [],
       search_term: '',
-      search_results: []
+      search_results: [],
+      dailyData: {2018: [], 2019: [], 2020: []},
+      dailyDate: {2018: [], 2019: [], 2020: []}
     };
     this.handleChange = this.handleChange.bind(this);
     this.selectSite = this.selectSite.bind(this);
@@ -55,6 +57,16 @@ class App extends React.Component {
     axios.get(`/storage/${this.state.site}`).then(results => {
         this.setState({reservoir_data: results.data.rows}, () => {
             if (this.state.reservoir_data.length) {
+              let dailyData = {
+                2018: [],
+                2019: [],
+                2020: []
+              };
+              let dailyDate = {
+                2018: [],
+                2019: [],
+                2020: []
+              };
                     let monthlyTotal2020 = {
                         1: 0,
                         2: 0,
@@ -104,6 +116,17 @@ class App extends React.Component {
                         6: 0
                     };
                 this.state.reservoir_data.map((datum) => {
+                  if (datum.date_time.slice(0,4) === '2020') {
+                    dailyData[2020].push(Number(datum.data_val));
+                    dailyDate[2020].push(datum.date_time);
+                  } else if (datum.date_time.slice(0,4) === '2019') {
+                    dailyData[2019].push(Number(datum.data_val));
+                    dailyDate[2019].push(datum.date_time);
+                  } else if (datum.date_time.slice(0,4) === '2018') {
+                    dailyData[2018].push(Number(datum.data_val));
+                    dailyDate[2018].push(datum.date_time);
+                  }
+
                     if (datum.date_time.slice(0,4) === '2020') {
                         monthlyTotal2020[datum.date_time[6]] += Number(datum.data_val);
                         monthlyNum2020[datum.date_time[6]] += 1;
@@ -123,9 +146,9 @@ class App extends React.Component {
                     avg2019.push(monthlyTotal2019[i] / monthlyNum2019[i]);
                     avg2018.push(monthlyTotal2018[i] / monthlyNum2018[i]);
                 }
-                this.setState({monthlyAvg2020: avg2020, monthlyAvg2019: avg2019, monthlyAvg2018: avg2018});
+                this.setState({monthlyAvg2020: avg2020, monthlyAvg2019: avg2019, monthlyAvg2018: avg2018, dailyData: dailyData, dailyDate: dailyDate});
             } else {
-                this.setState({monthlyAvg2020: [], monthlyAvg2019: [], monthlyAvg2018: []});
+                this.setState({monthlyAvg2020: [], monthlyAvg2019: [], monthlyAvg2018: [], dailyData: {2018: [], 2019: [], 2020: []}, dailyDate: {2018: [], 2019: [], 2020: []}});
             }
         });
     });
@@ -157,6 +180,8 @@ class App extends React.Component {
         <h1>
           <strong>Reservoir Data Visualizer</strong>
         </h1>
+        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#collapseable">Show Options</button>
+        <div id="collapseable" className="collapse">
         <div style={{display: 'inline-block', verticalAlign: 'top'}} className="first-dropdown">
           <p>
             <strong>Option 1</strong>
@@ -186,7 +211,7 @@ class App extends React.Component {
         </select>
         </div>
         <div style={{display: 'inline-block'}}>
-        <div style={{display: 'inline-block', margin: '0 50px', verticalAlign: 'top'}} className="centered">
+        <div style={{display: 'inline-block', margin: '0 50px', verticalAlign: 'top'}} className="centered collapse">
         <p><strong>Option 2</strong></p>
         <MarkedMap selectMarker={this.selectMarker} locations={this.state.reservoir_locations}/>
         </div>
@@ -196,10 +221,11 @@ class App extends React.Component {
           <SearchResults clear={this.clearSearchResults} selectResult={this.selectMarker} searchResults={this.state.search_results}/>
         </div>
         </div>
+        </div>
         <p><strong>{this.state.site ? `Site Number ${this.state.site}` : ''}</strong></p>
-        <MonthlyAvgChart year={2020} data={this.state.monthlyAvg2020}/>
-        <MonthlyAvgChart year={2019} data={this.state.monthlyAvg2019}/>
-        <MonthlyAvgChart year={2018} data={this.state.monthlyAvg2018}/>
+        <MonthlyAvgChart year={2020} dates={this.state.dailyDate[2020]} data={this.state.dailyData[2020]}/>
+        <MonthlyAvgChart year={2019} dates={this.state.dailyDate[2019]} data={this.state.dailyData[2019]}/>
+        <MonthlyAvgChart year={2018} dates={this.state.dailyDate[2018]} data={this.state.dailyData[2018]}/>
           <DataChart data2018={this.state.monthlyAvg2018} data2019={this.state.monthlyAvg2019} data2020={this.state.monthlyAvg2020}/>
       </div>
     );
