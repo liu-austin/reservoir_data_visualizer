@@ -6,7 +6,7 @@ CREATE DATABASE reservoir_data;
 
 CREATE TABLE metadata (
     agency_cd varchar(255),
-    site_no integer primary key,
+    site_no integer,
     station_nm varchar(255),
     site_tp_cd varchar(255),
     dec_lat_va varchar(255),
@@ -21,7 +21,7 @@ CREATE TABLE metadata (
 
 CREATE TABLE daily_data (
     agency_cd varchar(255),
-    site_no integer references metadata(site_no),
+    site_no integer,
     date_time varchar(255),
     data_val varchar(255),
     data_type varchar(255)
